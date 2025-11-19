@@ -1,7 +1,7 @@
 #include "Camera.h"
 #include "../Game.h"
 
-Camera::Camera(Game* game) : gamePtr(game), mPos(0.f, 0.f, 0.f), mRot(0.0f, -90.f) {
+Camera::Camera(Game* game) : gamePtr(game), mMode(CameraMode::Spectate), mTarget(nullptr), mPos(0.f), mRot(0.0f) {
     //
 };
 
@@ -17,7 +17,21 @@ CameraMode Camera::getMode() {
     return mMode;
 };
 
+void Camera::setMode(CameraMode mode, Entity* target) {
+    mMode = mode;
+    mTarget = (
+        target && target->isAlive() ? target : nullptr
+    );
+};
+
 void Camera::update() {
+    if(mMode == CameraMode::Attach) {
+        if(mTarget && mTarget->isAlive()) {
+            mRot = mTarget->getRot();
+            mPos = mTarget->getPos();
+        };
+    };
+    
     float pitch = glm::radians(mRot.x);
     float yaw   = glm::radians(mRot.y);
 
@@ -48,14 +62,14 @@ glm::vec2 Camera::getRot() {
 };
 
 void Camera::setRot(glm::vec2 newRot) {
+    newRot.x = glm::clamp(newRot.x, -89.f, 89.f);
+    
+    if(newRot.y < 0.f)
+        newRot.y += 360.f;
+    else if(newRot.y >= 360.f)
+        newRot.y -= 360.f;
+    
     mRot = newRot;
-    
-    mRot.x = glm::clamp(newRot.x, -89.f, 89.f);
-    mRot.y = fmod(mRot.y, 360.f);
-
-    if(mRot.y < 0.0f)
-        mRot.y += 360.f;
-    
     update();
 };
 
