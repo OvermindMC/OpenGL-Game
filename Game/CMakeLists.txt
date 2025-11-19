@@ -3,4 +3,5 @@ target_sources(${PROJECT_NAME} PRIVATE
 )
 
 add_subdirectory(Render)
+add_subdirectory(Entity)
 add_subdirectory(Camera)
