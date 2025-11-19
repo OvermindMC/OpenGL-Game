@@ -18,7 +18,9 @@ public:
     ~Camera();
 
     Game* getGame();
+
     CameraMode getMode();
+    void setMode(CameraMode, Entity* = nullptr);
 
     void update();
 
@@ -37,10 +39,11 @@ public:
     glm::mat4 getProjection();
 private:
     Game* gamePtr;
-    CameraMode mMode = CameraMode::Attach;
+
+    CameraMode mMode; Entity* mTarget;
 
     glm::vec3 mPos, mFront, mUp;
-    glm::vec2 mRot, mLast;
+    glm::vec2 mRot;
 
     float mFov = 72.f;
 };
