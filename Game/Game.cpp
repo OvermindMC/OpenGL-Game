@@ -15,7 +15,7 @@ void mouseCallback(GLFWwindow* window, double xPos, double yPos) {
     };
 };
 
-Game::Game() : mWindow(nullptr), mRndr(nullptr), mCam(nullptr), mIsRunning(false) {
+Game::Game() : mWindow(nullptr), mRndr(nullptr), mPlayer(nullptr), mCam(nullptr), mIsRunning(false) {
     if(!glfwInit()) {
         std::cout << "Failed to initialize GLFW!\n";
     } else {
@@ -50,7 +50,11 @@ Game::Game() : mWindow(nullptr), mRndr(nullptr), mCam(nullptr), mIsRunning(false
             glfwSetCursorPosCallback(mWindow, mouseCallback);
 
             mRndr = new Renderer(this);
+
+            mPlayer = new Player(this);
             mCam = new Camera(this);
+
+            mCam->setMode(CameraMode::Attach, mPlayer);
 
             IMGUI_CHECKVERSION();
             ImGui::CreateContext();
@@ -116,6 +120,8 @@ void Game::Run() {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        mCam->update();
+        
         mRndr->Render(mDelta);
 
         ImGui::Render();
@@ -154,7 +160,7 @@ CursorMode Game::getCursorMode() {
 };
 
 void Game::handleMouseInput(double xPos, double yPos) {
-    if (mCursorMode != CursorMode::Locked || !mCam)
+    if (mCursorMode != CursorMode::Locked || !mPlayer)
         return;
 
     glm::vec2 curr(xPos, yPos);
@@ -190,11 +196,11 @@ void Game::handleMouseInput(double xPos, double yPos) {
     if (speed < 0.0001f)
         smooth = glm::vec2(0.f);
     
-    glm::vec2 rot = mCam->getRot();
+    glm::vec2 rot = mPlayer->getRot();
     rot.x += final.x;
     rot.y += final.y;
 
-    mCam->setRot(rot);
+    mPlayer->setRot(rot);
 };
 
 void Game::updateViewport(int width, int height) {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Render/Renderer.h"
+#include "Entity/Player.h"
 #include "Camera/Camera.h"
 
 enum class CursorMode {
@@ -17,6 +18,7 @@ public:
     GLFWwindow* getWindow();
     
     Renderer* getRndr();
+    Player* getPlayer();
     Camera* getCam();
 
     void Run();
@@ -32,6 +34,7 @@ public:
 private:
     GLFWwindow* mWindow;
     Renderer* mRndr;
+    Player* mPlayer;
     Camera* mCam;
 
     bool mIsRunning;
