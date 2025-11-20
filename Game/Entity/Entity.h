@@ -21,6 +21,8 @@ public:
     void setRot(glm::vec2);
 
     bool isAlive();
+
+    virtual void update(float) {};
 private:
     Game* gamePtr;
 
