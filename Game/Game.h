@@ -4,10 +4,17 @@
 #include "Entity/Player.h"
 #include "Camera/Camera.h"
 
+#include <map>
+
 enum class CursorMode {
     Locked,     // FPS Gameplay
     Free,       // Menus, UI
     Hidden,     // Other
+};
+
+enum class MoveInput : int {
+    Forward, Backward, Left, Right,
+    Jump, Crouch
 };
 
 class Game {
@@ -31,6 +38,9 @@ public:
 
     void updateViewport(int, int);
     const int* getViewport();
+
+    bool isInputPressed(MoveInput);
+    void bindInput(MoveInput, int);
 private:
     GLFWwindow* mWindow;
     Renderer* mRndr;
@@ -44,4 +54,6 @@ private:
 
     CursorMode mCursorMode;
     glm::vec2 lastMousePos;
+
+    std::map<MoveInput, int> mInputs;
 };
