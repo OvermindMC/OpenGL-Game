@@ -62,6 +62,14 @@ Game::Game() : mWindow(nullptr), mRndr(nullptr), mPlayer(nullptr), mCam(nullptr)
             ImGui_ImplGlfw_InitForOpenGL(mWindow, true);
             ImGui_ImplOpenGL3_Init("#version 430");
 
+            bindInput(MoveInput::Left, GLFW_KEY_A);
+            bindInput(MoveInput::Right, GLFW_KEY_D);
+            bindInput(MoveInput::Forward, GLFW_KEY_W);
+            bindInput(MoveInput::Backward, GLFW_KEY_S);
+
+            bindInput(MoveInput::Jump, GLFW_KEY_SPACE);
+            bindInput(MoveInput::Crouch, GLFW_KEY_LEFT_SHIFT);
+
             this->Run(); // Begin Render Loop
         };
     };
@@ -121,7 +129,7 @@ void Game::Run() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         mCam->update();
-        
+        mPlayer->update(mDelta);
         mRndr->Render(mDelta);
 
         ImGui::Render();
@@ -210,4 +218,16 @@ void Game::updateViewport(int width, int height) {
 
 const int* Game::getViewport() {
     return mVp;
+};
+
+bool Game::isInputPressed(MoveInput input) {
+    auto iter = mInputs.find(input);
+
+    return (
+        iter != mInputs.end() ? glfwGetKey(mWindow, iter->second) == GLFW_PRESS : false
+    );
+};
+
+void Game::bindInput(MoveInput input, int keyCode) {
+    mInputs[input] = keyCode;
 };
