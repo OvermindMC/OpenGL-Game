@@ -67,10 +67,11 @@ const char* frag = R"(
     #version 430 core
 
     out vec4 FragColor;
+    uniform vec4 uColor;
 
     void main()
     {
-        FragColor = vec4(0.8, 0.2, 0.3, 1.0); // Red-ish cube
+        FragColor = uColor;
     }
 )";
 
@@ -133,17 +134,29 @@ unsigned int Renderer::createShader(const char* vertexSrc, const char* fragmentS
 
 void Renderer::Render(float delta) {
     if(Camera* cam = getGame()->getCam()) {
-        glUseProgram(cubeShader);
-
-        glm::mat4 model = glm::mat4(1.f);
-        model = glm::translate(model, glm::vec3(0.f, 0.f, -5.f));
-        
         glm::mat4 view = cam->getViewMatrix();
         glm::mat4 proj = cam->getProjection();
 
-        glUniformMatrix4fv(glGetUniformLocation(cubeShader, "uModel"), 1, GL_FALSE, &model[0][0]);
+        glUseProgram(cubeShader);
         glUniformMatrix4fv(glGetUniformLocation(cubeShader, "uView"),  1, GL_FALSE, &view[0][0]);
         glUniformMatrix4fv(glGetUniformLocation(cubeShader, "uProj"),  1, GL_FALSE, &proj[0][0]);
+        
+
+        glm::mat4 model = glm::mat4(1.f);
+        model = glm::translate(model, glm::vec3(0.f, 0.f, 0.f));
+        model = glm::scale(model, glm::vec3(20.f, 0.5f, 20.f));
+
+        glUniformMatrix4fv(glGetUniformLocation(cubeShader, "uModel"), 1, GL_FALSE, &model[0][0]);
+        glUniform4f(glGetUniformLocation(cubeShader, "uColor"), 10.f / 255.f, 150.f / 255.f, 160.f / 255.f, 1.f);
+
+        glBindVertexArray(cubeVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        model = glm::mat4(1.f);
+        model = glm::translate(model, glm::vec3(0.f, 2.f, 0.f));
+
+        glUniformMatrix4fv(glGetUniformLocation(cubeShader, "uModel"), 1, GL_FALSE, &model[0][0]);
+        glUniform4f(glGetUniformLocation(cubeShader, "uColor"), 10.f / 255.f, 92.f / 255.f, 160.f / 255.f, 1.f);
 
         glBindVertexArray(cubeVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
