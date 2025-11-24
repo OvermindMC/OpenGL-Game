@@ -99,6 +99,10 @@ Renderer* Game::getRndr() {
     return mRndr;
 };
 
+Player* Game::getPlayer() {
+    return mPlayer;
+};
+
 Camera* Game::getCam() {
     return mCam;
 };
@@ -128,8 +132,11 @@ void Game::Run() {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        mRndr->updateOrigin();
+
         mCam->update(mDelta);
         mPlayer->update(mDelta);
+        
         mRndr->Render(mDelta);
 
         ImGui::Render();

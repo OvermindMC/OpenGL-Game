@@ -25,8 +25,8 @@ public:
     void update(float);
     void updateNorms();
 
-    glm::vec3 getPos();
-    void setPos(glm::vec3);
+    glm::dvec3 getPos();
+    void setPos(glm::dvec3);
 
     glm::vec3 getFront();
 
@@ -43,8 +43,9 @@ private:
 
     CameraMode mMode; Entity* mTarget;
 
-    glm::vec3 mPos, mFront, mUp;
-    glm::vec2 mRot;
+    glm::dvec3 mPos;
+    glm::dvec3 mFront, mUp;
+    glm::dvec2 mRot;
 
     float mFov = 72.f;
 };

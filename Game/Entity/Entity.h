@@ -11,16 +11,16 @@ public:
 
     Game* getGame();
 
-    glm::vec3 getPos();
-    void setPos(glm::vec3);
+    glm::dvec3 getPos();
+    void setPos(glm::dvec3);
 
-    glm::vec3 getVelocity();
-    void setVelocity(glm::vec3);
+    glm::dvec3 getVelocity();
+    void setVelocity(glm::dvec3);
 
-    glm::vec2 getRot();
-    glm::vec2 getRotTarget();
+    glm::dvec2 getRot();
+    glm::dvec2 getRotTarget();
 
-    void setRot(glm::vec2);
+    void setRot(glm::dvec2);
 
     bool isAlive();
 
@@ -28,8 +28,8 @@ public:
 protected:
     Game* gamePtr;
 
-    glm::vec3 mPos, mVel;
-    glm::vec2 mRot, mRotTarget;
+    glm::dvec3 mPos, mVel;
+    glm::dvec2 mRot, mRotTarget;
 
     bool mIsAlive = false, mWasAlive = false;
     float mHealth;

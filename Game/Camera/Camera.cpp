@@ -50,11 +50,11 @@ void Camera::updateNorms() {
     mUp = glm::vec3(0.f, 1.f, 0.f);
 };
 
-glm::vec3 Camera::getPos() {
+glm::dvec3 Camera::getPos() {
     return mPos;
 };
 
-void Camera::setPos(glm::vec3 newPos) {
+void Camera::setPos(glm::dvec3 newPos) {
     mPos = newPos;
     updateNorms();
 };
@@ -88,7 +88,16 @@ void Camera::setFov(float fov) {
 };
 
 glm::mat4 Camera::getViewMatrix() {
-    return glm::lookAt(mPos, mPos + mFront, mUp);
+    glm::mat4 result(0.f);
+
+    if(Game* game = this->getGame()) {
+        if(Renderer* rndr = game->getRndr()) {
+            glm::dvec3 pos = mPos - rndr->getOrigin();
+            result = glm::lookAt(pos, pos + mFront, mUp);
+        };
+    };
+
+    return result;
 };
 
 glm::mat4 Camera::getProjection() {
@@ -98,5 +107,5 @@ glm::mat4 Camera::getProjection() {
         aspect = static_cast<float>(vp[0]) / static_cast<float>(vp[1]);
     };
 
-    return glm::perspective(glm::radians(mFov), aspect, 0.1f, 500.f);
+    return glm::perspective(glm::radians(mFov), aspect, 0.1f, 5000.f);
 };

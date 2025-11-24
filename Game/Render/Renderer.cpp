@@ -75,7 +75,7 @@ const char* frag = R"(
     }
 )";
 
-Renderer::Renderer(Game* game) : gamePtr(game) {
+Renderer::Renderer(Game* game) : gamePtr(game), mRndrOffset(0.f) {
     glEnable(GL_DEPTH_TEST);
 
     glGenVertexArrays(1, &cubeVAO);
@@ -133,33 +133,62 @@ unsigned int Renderer::createShader(const char* vertexSrc, const char* fragmentS
 };
 
 void Renderer::Render(float delta) {
-    if(Camera* cam = this->getGame()->getCam()) {
-        glm::mat4 view = cam->getViewMatrix();
-        glm::mat4 proj = cam->getProjection();
+    if(Game* game = this->getGame()) {
+        if(Player* player = game->getPlayer()) {
+            glm::dvec3 pos = player->getPos();
+            float dist = glm::length(pos - glm::dvec3(0.f));
 
-        glUseProgram(cubeShader);
-        glUniformMatrix4fv(glGetUniformLocation(cubeShader, "uView"),  1, GL_FALSE, &view[0][0]);
-        glUniformMatrix4fv(glGetUniformLocation(cubeShader, "uProj"),  1, GL_FALSE, &proj[0][0]);
-        
-        int range = 36;
-        for(int x = -range; x <= range; x++) {
-            for(int z = - range; z <= range; z++) {
-                glm::vec3 pos = glm::vec3(x, 0, z);
-                
-                glm::mat4 model = glm::mat4(1.f);
-                model = glm::translate(model, pos);
+            std::string text("Distance: " + std::to_string((int)dist));
+            ImGui::GetBackgroundDrawList()->AddText(
+                ImVec2(10.f, 10.f), ImColor(21.f, 21.f, 21.f), text.c_str()
+            );
+        };
+        if(Camera* cam = game->getCam()) {
+            glm::mat4 view = cam->getViewMatrix();
+            glm::mat4 proj = cam->getProjection();
 
-                glUniformMatrix4fv(glGetUniformLocation(cubeShader, "uModel"), 1, GL_FALSE, &model[0][0]);
-                
-                if(x % 12 == 0 || z % 12 == 0) {
-                    glUniform4f(glGetUniformLocation(cubeShader, "uColor"), 10.f / 255.f, 150.f / 255.f, 160.f / 255.f, 1.f);
-                } else {
-                    glUniform4f(glGetUniformLocation(cubeShader, "uColor"), 10.f / 255.f, 92.f / 255.f, 160.f / 255.f, 1.f);
+            glUseProgram(cubeShader);
+            glUniformMatrix4fv(glGetUniformLocation(cubeShader, "uView"),  1, GL_FALSE, &view[0][0]);
+            glUniformMatrix4fv(glGetUniformLocation(cubeShader, "uProj"),  1, GL_FALSE, &proj[0][0]);
+
+            int range = 36;
+            for(int x = -range; x <= range; x++) {
+                for(int z = - range; z <= range; z++) {
+                    glm::dvec3 pos = glm::dvec3(x, 0, z);
+                    glm::dvec3 rPos = pos - mRndrOffset;
+                    
+                    glm::mat4 model = glm::mat4(1.f);
+                    model = glm::translate(model, glm::vec3(rPos));
+
+                    glUniformMatrix4fv(glGetUniformLocation(cubeShader, "uModel"), 1, GL_FALSE, &model[0][0]);
+                    
+                    if(x % 12 == 0 || z % 12 == 0) {
+                        glUniform4f(glGetUniformLocation(cubeShader, "uColor"), 10.f / 255.f, 150.f / 255.f, 160.f / 255.f, 1.f);
+                    } else {
+                        glUniform4f(glGetUniformLocation(cubeShader, "uColor"), 10.f / 255.f, 92.f / 255.f, 160.f / 255.f, 1.f);
+                    };
+
+                    glBindVertexArray(cubeVAO);
+                    glDrawArrays(GL_TRIANGLES, 0, 36);
                 };
-
-                glBindVertexArray(cubeVAO);
-                glDrawArrays(GL_TRIANGLES, 0, 36);
             };
         };
     };
+};
+
+void Renderer::updateOrigin() {
+    if(Game* game = this->getGame()) {
+        if(Player* player = game->getPlayer()) {
+            glm::dvec3 pos = player->getPos();
+            double dist = glm::length(pos - mRndrOffset);
+
+            if(dist > 400.0) {
+                mRndrOffset = pos;
+            };
+        };
+    };
+};
+
+glm::dvec3 Renderer::getOrigin() {
+    return mRndrOffset;
 };

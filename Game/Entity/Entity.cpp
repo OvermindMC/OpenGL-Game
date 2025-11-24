@@ -8,31 +8,31 @@ Game* Entity::getGame() {
     return gamePtr;
 };
 
-glm::vec3 Entity::getPos() {
+glm::dvec3 Entity::getPos() {
     return mPos;
 };
 
-void Entity::setPos(glm::vec3 newPos) {
+void Entity::setPos(glm::dvec3 newPos) {
     mPos = newPos;
 };
 
-glm::vec3 Entity::getVelocity() {
+glm::dvec3 Entity::getVelocity() {
     return mVel;
 };
 
-void Entity::setVelocity(glm::vec3 motion) {
+void Entity::setVelocity(glm::dvec3 motion) {
     mVel = motion;
 };
 
-glm::vec2 Entity::getRot() {
+glm::dvec2 Entity::getRot() {
     return mRot;
 };
 
-glm::vec2 Entity::getRotTarget() {
+glm::dvec2 Entity::getRotTarget() {
     return mRotTarget;
 };
 
-void Entity::setRot(glm::vec2 newRot) {
+void Entity::setRot(glm::dvec2 newRot) {
     mRotTarget = newRot;
 };
 

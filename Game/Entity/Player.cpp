@@ -14,7 +14,7 @@ void Player::update(float deltaTime) {
         if(!cam || !this->isAlive())
             return;
         
-        glm::vec2 diff = mRotTarget - mRot;
+        glm::dvec2 diff = mRotTarget - mRot;
         
         if(glm::length(diff) > 0.001f) {
             diff.x = mRotTarget.x - mRot.x;
@@ -24,10 +24,10 @@ void Player::update(float deltaTime) {
             if(dist < 1.f)
                 dist *= 0.1f;
 
-            float t = 1.f - expf(-((dist * 1.f) + 0.1f) * deltaTime);
+            double t = 1.f - expf(-((dist * 1.f) + 0.1f) * deltaTime);
             mRot += diff * t;
 
-            mRot.x = glm::clamp(mRot.x, -89.f, 89.f);
+            mRot.x = glm::clamp(mRot.x, -89.0, 89.0);
         };
         
         glm::vec3 moveDir(0.f);
@@ -59,7 +59,7 @@ void Player::update(float deltaTime) {
         if(glm::length(moveDir) > 0.0001f)
             moveDir = glm::normalize(moveDir);
         
-        float speed = 3.f;
+        float speed = 30.f;
         glm::vec3 vel = moveDir * speed;
         this->setVelocity(vel);
 
