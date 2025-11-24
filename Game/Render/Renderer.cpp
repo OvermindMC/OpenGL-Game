@@ -133,7 +133,7 @@ unsigned int Renderer::createShader(const char* vertexSrc, const char* fragmentS
 };
 
 void Renderer::Render(float delta) {
-    if(Camera* cam = getGame()->getCam()) {
+    if(Camera* cam = this->getGame()->getCam()) {
         glm::mat4 view = cam->getViewMatrix();
         glm::mat4 proj = cam->getProjection();
 
@@ -141,24 +141,25 @@ void Renderer::Render(float delta) {
         glUniformMatrix4fv(glGetUniformLocation(cubeShader, "uView"),  1, GL_FALSE, &view[0][0]);
         glUniformMatrix4fv(glGetUniformLocation(cubeShader, "uProj"),  1, GL_FALSE, &proj[0][0]);
         
+        int range = 36;
+        for(int x = -range; x <= range; x++) {
+            for(int z = - range; z <= range; z++) {
+                glm::vec3 pos = glm::vec3(x, 0, z);
+                
+                glm::mat4 model = glm::mat4(1.f);
+                model = glm::translate(model, pos);
 
-        glm::mat4 model = glm::mat4(1.f);
-        model = glm::translate(model, glm::vec3(0.f, 0.f, 0.f));
-        model = glm::scale(model, glm::vec3(20.f, 0.5f, 20.f));
+                glUniformMatrix4fv(glGetUniformLocation(cubeShader, "uModel"), 1, GL_FALSE, &model[0][0]);
+                
+                if(x % 12 == 0 || z % 12 == 0) {
+                    glUniform4f(glGetUniformLocation(cubeShader, "uColor"), 10.f / 255.f, 150.f / 255.f, 160.f / 255.f, 1.f);
+                } else {
+                    glUniform4f(glGetUniformLocation(cubeShader, "uColor"), 10.f / 255.f, 92.f / 255.f, 160.f / 255.f, 1.f);
+                };
 
-        glUniformMatrix4fv(glGetUniformLocation(cubeShader, "uModel"), 1, GL_FALSE, &model[0][0]);
-        glUniform4f(glGetUniformLocation(cubeShader, "uColor"), 10.f / 255.f, 150.f / 255.f, 160.f / 255.f, 1.f);
-
-        glBindVertexArray(cubeVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-
-        model = glm::mat4(1.f);
-        model = glm::translate(model, glm::vec3(0.f, 2.f, 0.f));
-
-        glUniformMatrix4fv(glGetUniformLocation(cubeShader, "uModel"), 1, GL_FALSE, &model[0][0]);
-        glUniform4f(glGetUniformLocation(cubeShader, "uColor"), 10.f / 255.f, 92.f / 255.f, 160.f / 255.f, 1.f);
-
-        glBindVertexArray(cubeVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+                glBindVertexArray(cubeVAO);
+                glDrawArrays(GL_TRIANGLES, 0, 36);
+            };
+        };
     };
 };
