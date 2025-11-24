@@ -18,16 +18,18 @@ public:
     void setVelocity(glm::vec3);
 
     glm::vec2 getRot();
+    glm::vec2 getRotTarget();
+
     void setRot(glm::vec2);
 
     bool isAlive();
 
     virtual void update(float) {};
-private:
+protected:
     Game* gamePtr;
 
     glm::vec3 mPos, mVel;
-    glm::vec2 mRot;
+    glm::vec2 mRot, mRotTarget;
 
     bool mIsAlive = false, mWasAlive = false;
     float mHealth;

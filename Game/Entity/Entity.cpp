@@ -28,15 +28,12 @@ glm::vec2 Entity::getRot() {
     return mRot;
 };
 
+glm::vec2 Entity::getRotTarget() {
+    return mRotTarget;
+};
+
 void Entity::setRot(glm::vec2 newRot) {
-    newRot.x = glm::clamp(newRot.x, -89.f, 89.f);
-
-    if(newRot.y < 0.f)
-        newRot.y += 360.f;
-    else if(newRot.y >= 360.f)
-        newRot.y -= 360.f;
-
-    mRot = newRot;
+    mRotTarget = newRot;
 };
 
 bool Entity::isAlive() {

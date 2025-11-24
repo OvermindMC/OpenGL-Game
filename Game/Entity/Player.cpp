@@ -8,11 +8,27 @@ Player::Player(Game* game) : Entity(game, 10.f) {
 };
 
 void Player::update(float deltaTime) {
-    if(Game* game = getGame()) {
+    if(Game* game = this->getGame()) {
         Camera* cam = game->getCam();
 
         if(!cam || !this->isAlive())
             return;
+        
+        glm::vec2 diff = mRotTarget - mRot;
+        
+        if(glm::length(diff) > 0.001f) {
+            diff.x = mRotTarget.x - mRot.x;
+            diff.y = fmodf((mRotTarget.y - mRot.y) + 540.f, 360.f) - 180.f;
+
+            float dist = glm::length(diff);
+            if(dist < 1.f)
+                dist *= 0.1f;
+
+            float t = 1.f - expf(-((dist * 1.f) + 0.1f) * deltaTime);
+            mRot += diff * t;
+
+            mRot.x = glm::clamp(mRot.x, -89.f, 89.f);
+        };
         
         glm::vec3 moveDir(0.f);
         glm::vec3 front = cam->getFront();
@@ -43,7 +59,7 @@ void Player::update(float deltaTime) {
         if(glm::length(moveDir) > 0.0001f)
             moveDir = glm::normalize(moveDir);
         
-        float speed = 10.f;
+        float speed = 3.f;
         glm::vec3 vel = moveDir * speed;
         this->setVelocity(vel);
 
