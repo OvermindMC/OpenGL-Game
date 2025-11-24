@@ -128,7 +128,7 @@ void Game::Run() {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        mCam->update();
+        mCam->update(mDelta);
         mPlayer->update(mDelta);
         mRndr->Render(mDelta);
 
@@ -168,47 +168,19 @@ CursorMode Game::getCursorMode() {
 };
 
 void Game::handleMouseInput(double xPos, double yPos) {
-    if (mCursorMode != CursorMode::Locked || !mPlayer)
+    if(mCursorMode != CursorMode::Locked || !mPlayer)
         return;
 
-    glm::vec2 curr(xPos, yPos);
+    glm::vec2 raw(lastMousePos.y - yPos, xPos - lastMousePos.x);
+    lastMousePos = glm::vec2(xPos, yPos);
 
-    glm::vec2 raw(
-        lastMousePos.y - curr.y,     // pitch
-        curr.x - lastMousePos.x      // yaw
-    );
-
-    lastMousePos = curr;
-
-    float sens = 0.10f;
+    float sens = 0.1f;
     raw *= sens;
 
-    float speed = glm::length(raw);
+    glm::vec2 target = mPlayer->getRotTarget();
+    target += raw;
 
-    static glm::vec2 smooth(0.f);
-    float blend;
-
-    if (speed < 0.5f)
-        blend = 0.0f;
-    else if (speed < 1.5f)
-        blend = (speed - 0.5f) / 1.0f;
-    else
-        blend = 1.0f;
-
-    float smoothStrength = 12.f;
-    float t = 1.f - expf(-smoothStrength * mDelta);
-
-    smooth = glm::mix(smooth, raw, t);
-    glm::vec2 final = glm::mix(smooth, raw, blend);
-
-    if (speed < 0.0001f)
-        smooth = glm::vec2(0.f);
-    
-    glm::vec2 rot = mPlayer->getRot();
-    rot.x += final.x;
-    rot.y += final.y;
-
-    mPlayer->setRot(rot);
+    mPlayer->setRot(target);
 };
 
 void Game::updateViewport(int width, int height) {
