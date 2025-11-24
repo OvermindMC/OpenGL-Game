@@ -24,14 +24,20 @@ void Camera::setMode(CameraMode mode, Entity* target) {
     );
 };
 
-void Camera::update() {
+void Camera::update(float deltaTime) {
     if(mMode == CameraMode::Attach) {
         if(mTarget && mTarget->isAlive()) {
-            mRot = mTarget->getRot();
-            mPos = mTarget->getPos();
+            this->setPos(
+                mTarget->getPos()
+            );
+            this->setRot(
+                mTarget->getRot()
+            );
         };
     };
-    
+};
+
+void Camera::updateNorms() {
     float pitch = glm::radians(mRot.x);
     float yaw   = glm::radians(mRot.y);
 
@@ -50,7 +56,7 @@ glm::vec3 Camera::getPos() {
 
 void Camera::setPos(glm::vec3 newPos) {
     mPos = newPos;
-    update();
+    updateNorms();
 };
 
 glm::vec3 Camera::getFront() {
@@ -70,7 +76,7 @@ void Camera::setRot(glm::vec2 newRot) {
         newRot.y -= 360.f;
     
     mRot = newRot;
-    update();
+    updateNorms();
 };
 
 float Camera::getFov() {

@@ -22,7 +22,8 @@ public:
     CameraMode getMode();
     void setMode(CameraMode, Entity* = nullptr);
 
-    void update();
+    void update(float);
+    void updateNorms();
 
     glm::vec3 getPos();
     void setPos(glm::vec3);
